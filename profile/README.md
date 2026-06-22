@@ -1,255 +1,119 @@
-# ⚡ trade-mesh-ai
+# ⚡ Trade Mesh AI
 
-> Algorithmic trading infrastructure for Indian markets — built on Java, Spring Boot, and AI.
-
----
-
-## 🎯 What We Build
-
-**trade-mesh-ai** is an open ecosystem of algorithmic trading tools, strategies, and intelligence services for retail traders in India. Our platform targets NIFTY and BankNIFTY options on NSE, powered by real-time market intelligence, pluggable strategies, and AI-assisted decision making.
-
-We believe retail traders deserve institutional-grade tools — built with transparency, extensibility, and smart risk management at the core.
+> **Event-Driven Trading Microservices Architecture**  
+> Built by [Kuldeep Singh](https://github.com/kuldeepsingh123) · Associate Principal Engineer · Fintech & Microservices Specialist
 
 ---
 
-## 🧠 Core Philosophy
+## 👋 About
 
-```
-❌  Don't predict market direction
-✅  Understand market conditions
+**Trade Mesh** is a production-grade microservices ecosystem for modern trading platforms — built with a focus on high throughput, low latency, and resilient event-driven design.
 
-❌  Run one strategy blindly
-✅  Let market intelligence select the right strategy
+Here you'll find services covering:
 
-❌  Manual trading with emotions
-✅  Rule-based automation with strict risk controls
-
-❌  Hold overnight and hope
-✅  Defined risk, defined exit, always
-```
+- 📈 **Order Management** — Place, modify, cancel and track trade orders
+- 💹 **Market Data** — Real-time price feeds and market event streaming
+- ⚙️ **Trade Execution** — Order matching and execution engine
+- 🔔 **Notification Service** — Alerts and trade confirmations
+- 🛡️ **Risk & Compliance** — Pre-trade risk checks and audit trails
+- 🌐 **API Gateway** — Unified entry point with OAuth 2.0 & JWT security
 
 ---
 
-## 🏗️ Platform Architecture
+## 🏗️ Architecture
 
 ```
-                    ┌─────────────────────────┐
-                    │   Zerodha Kite Connect   │
-                    │  WebSocket + REST API    │
-                    └────────────┬────────────┘
-                                 ↓
-                    ┌─────────────────────────┐
-                    │  Market Intelligence    │
-                    │  VIX · OI · Max Pain    │
-                    │  PCR · Greeks · Events  │
-                    └────────────┬────────────┘
-                                 ↓
-                    ┌─────────────────────────┐
-                    │   Strategy Selector     │
-                    │  Condition → Strategy   │
-                    └────────────┬────────────┘
-                                 ↓
-          ┌──────────────────────┼──────────────────────┐
-          ↓                      ↓                      ↓
-  ┌───────────────┐    ┌───────────────┐    ┌───────────────┐
-  │ Expiry Day    │    │ Theta Spread  │    │ Bull Put      │
-  │ Selling       │    │ Strategy      │    │ Spread        │
-  └───────────────┘    └───────────────┘    └───────────────┘
-                                 ↓
-                    ┌─────────────────────────┐
-                    │    Risk Management      │
-                    │  Position · Stop Loss   │
-                    │  Margin · Weekly Limit  │
-                    └────────────┬────────────┘
-                                 ↓
-                    ┌─────────────────────────┐
-                    │   Order Execution       │
-                    │  Paper · Live · Track   │
-                    └─────────────────────────┘
+                        ┌─────────────────┐
+                        │   API Gateway   │  ← Spring Cloud Gateway
+                        │  OAuth 2.0/JWT  │
+                        └────────┬────────┘
+                                 │
+              ┌──────────────────┼──────────────────┐
+              │                  │                  │
+     ┌────────▼───────┐ ┌───────▼────────┐ ┌───────▼────────┐
+     │  Order Service │ │ Market Data Svc│ │Execution Engine│
+     │  Spring Boot   │ │ Spring WebFlux │ │  Spring Boot   │
+     └────────┬───────┘ └───────┬────────┘ └───────┬────────┘
+              │                  │                  │
+              └──────────────────┼──────────────────┘
+                                 │
+                        ┌────────▼────────┐
+                        │  Apache Kafka   │  ← Event Backbone
+                        │  Event Streams  │
+                        └────────┬────────┘
+                                 │
+              ┌──────────────────┼──────────────────┐
+              │                  │                  │
+     ┌────────▼───────┐ ┌───────▼────────┐ ┌───────▼────────┐
+     │  Notification  │ │ Risk & Compliance│ │   Audit Log   │
+     │    Service     │ │    Service      │ │    Service    │
+     └────────────────┘ └────────────────┘ └───────────────┘
 ```
 
 ---
 
-## 📁 Repositories
+## 📦 Repositories
 
-| Repository | Description | Status |
-|---|---|---|
-| [trade-mesh-ai](https://github.com/trade-mesh/trade-mesh-ai) | Core monolithic trading platform | 🚧 Active |
-| [trade-mesh-intelligence](https://github.com/trade-mesh/trade-mesh-intelligence) | Market intelligence library | 🔜 Coming |
-| [trade-mesh-backtest](https://github.com/trade-mesh/trade-mesh-backtest) | Historical strategy backtesting engine | 🔜 Coming |
-| [trade-mesh-dashboard](https://github.com/trade-mesh/trade-mesh-dashboard) | React trading dashboard | 🔜 Coming |
-| [trade-mesh-docs](https://github.com/trade-mesh/trade-mesh-docs) | Documentation and guides | 🔜 Coming |
-
----
-
-## 🧩 Core Features
-
-### 📡 Market Intelligence Layer
-Runs continuously — calculates everything once, shared across all strategies:
-- **VIX Monitor** — Volatility regime detection
-- **OI Analyser** — Institutional call/put wall detection
-- **Max Pain Calculator** — Weekly expiry price prediction
-- **PCR Tracker** — Put call ratio sentiment
-- **Greeks Engine** — Delta, Theta, Vega, Gamma in real time
-- **Event Calendar** — Auto skip RBI, Fed, Budget days
-
-### 🎯 Pluggable Strategy Engine
-Add new strategies without touching core logic:
-```java
-@Component
-public class MyStrategy implements TradingStrategy {
-    public boolean isApplicable(MarketCondition condition) { ... }
-    public Mono<TradeSignal> execute(MarketIntelligence intel) { ... }
-}
-```
-
-### 🛡️ Risk Management
-- Position sizing based on capital and volatility
-- Stop loss enforced automatically
-- Weekly loss limit — auto pause on breach
-- Margin checker before every order
-- Paper trading mode — test without real money
-
-### 🤖 AI Layer (Coming Phase 3)
-- Claude AI integration for market analysis
-- Pre-trade risk assessment
-- Strategy recommendation based on conditions
-- Natural language trade explanations
-
----
-
-## 🔌 Broker Support
-
-| Broker | Status | Type |
-|---|---|---|
-| Zerodha Kite Connect | ✅ Phase 1 | Primary |
-| Upstox Pro API | 🔜 Phase 3 | Secondary |
-| Angel One SmartAPI | 🔜 Phase 4 | Tertiary |
-| Paper Trading | ✅ Built-in | Simulation |
-
-Adding a new broker:
-```java
-@Service
-public class UpstoxAdapter implements BrokerAdapter {
-    // implement interface — plugs in automatically
-}
-```
-
----
-
-## 📊 Market Streams Roadmap
-
-| Stream | Status |
-|---|---|
-| NIFTY Options | ✅ Phase 1 |
-| BankNIFTY Options | ✅ Phase 1 |
-| NIFTY Futures | 🔜 Phase 2 |
-| Cash / Equity | 🔜 Phase 3 |
-| Crypto | 🔜 Future |
+| Repo | Description | Stack |
+|------|-------------|-------|
+| [`trade-mesh`](https://github.com/trade-mesh/trade-mesh) | Monorepo — all microservices | Spring Boot, Kafka, WebFlux |
+| [`order-service`](https://github.com/trade-mesh/order-service) | Order lifecycle management | Spring Boot, JPA, Kafka |
+| [`market-data-service`](https://github.com/trade-mesh/market-data-service) | Real-time market data streaming | Spring WebFlux, Kafka |
+| [`execution-engine`](https://github.com/trade-mesh/execution-engine) | Trade matching & execution | Spring Boot, Kafka |
+| [`notification-service`](https://github.com/trade-mesh/notification-service) | Trade alerts & confirmations | Spring Boot, Kafka |
+| [`api-gateway`](https://github.com/trade-mesh/api-gateway) | Unified gateway with auth | Spring Cloud Gateway, JWT |
 
 ---
 
 ## 🛠️ Tech Stack
 
 ```
-Language     →  Java 21 (Virtual Threads)
-Framework    →  Spring Boot 3.3
-Reactive     →  Spring WebFlux
-Build        →  Gradle (Kotlin DSL)
-Database     →  SQLite → PostgreSQL
-Cache        →  Redis (Lettuce reactive)
-Messaging    →  Apache Kafka (Phase 2)
-AI           →  Anthropic Claude API
-Alerts       →  Telegram Bot
-Containers   →  Docker → Kubernetes (Phase 5)
+Languages       →  Java 17+, Python
+Backend         →  Spring Boot 3.x, Spring WebFlux, Apache Camel
+Messaging       →  Apache Kafka, Kafka Streams
+Security        →  OAuth 2.0, JWT
+Data            →  PostgreSQL, Redis, Hibernate / JPA
+DevOps          →  Docker, Kubernetes, GitHub Actions
+Observability   →  Micrometer, Prometheus, Grafana
 ```
 
 ---
 
-## 📅 Roadmap
+## 🚀 Getting Started
 
-```
-2025 Q3  ✅  Project foundation
-             Zerodha auth + KiteTicker
-             Market Intelligence Layer
-             Paper trading engine
-             Expiry Day strategy
+```bash
+# Clone the monorepo
+git clone https://github.com/trade-mesh/trade-mesh.git
+cd trade-mesh
 
-2025 Q4  🚧  Live trading — Zerodha
-             Risk engine
-             Multiple strategies
-             Telegram alerts
+# Copy environment config
+cp .env.example .env
 
-2026 Q1  🔜  AI integration — Claude
-             Options strategy expansion
-             Backtest engine
-             Second broker — Upstox
-
-2026 Q2  🔜  SaaS / Rental platform
-             Multi-tenant architecture
-             Stripe billing
-             Strategy marketplace
-
-2026 Q3+ 🔜  Scale and expand
-             Kubernetes
-             Global markets
-             AutoML optimizer
+# Spin up all services with Docker Compose
+docker-compose up -d
 ```
 
----
-
-## 💰 SaaS Vision
-
-trade-mesh-ai is not just a personal trading tool — it is a **rental platform** for retail algo traders in India.
-
-| Plan | Price | Features |
-|---|---|---|
-| Starter | ₹999/month | 1 strategy · Paper trading · Basic alerts |
-| Pro | ₹2,999/month | All strategies · Live trading · AI signals · Risk engine |
-| Elite | ₹7,999/month | Custom strategies · White label · Priority support |
-
-> Own broker credentials, own capital, own risk — we provide the intelligence and automation.
+Services will be available at:
+- API Gateway → `http://localhost:8080`
+- Kafka UI    → `http://localhost:9090`
+- Grafana     → `http://localhost:3000`
 
 ---
 
-## 🤝 Contributing
+## 📬 Connect
 
-We welcome contributions from algo traders, quant developers, and Java engineers.
-
-```
-1. Fork the repository
-2. Create feature branch
-3. Implement TradingStrategy or BrokerAdapter interface
-4. Write unit tests
-5. Submit pull request
-```
-
-Read our [Contributing Guide](CONTRIBUTING.md) before submitting.
+- 💼 [LinkedIn](https://www.linkedin.com/in/kuldeepsingh-engineer)
+- 🐙 [GitHub](https://github.com/kuldeepsingh123)
+- 🧠 [MicroMinds AI](https://github.com/microminds-ai) ← my AI & engineering org
+- 📧 Open an issue on any repo for questions or collaboration
 
 ---
 
-## ⚠️ Disclaimer
+> *"In trading, milliseconds matter. In microservices, boundaries matter. Trade Mesh respects both."*
 
-All tools in this organization are for **educational and personal use only**. Algorithmic trading involves significant financial risk. Past strategy performance does not guarantee future results. Always paper trade before going live. The maintainers are not responsible for any financial losses incurred through use of this software.
-
----
-
-## 👤 Maintainer
-
-**Kuldeep Singh**  
-Associate Principal Engineer · LTIMindtree · Noida, India  
-13+ years Java · Spring Boot · Kafka · Microservices · Fintech
-
-[![GitHub](https://img.shields.io/badge/GitHub-kuldeepsingh123-181717?style=flat&logo=github)](https://github.com/kuldeepsingh123)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-kuldeepsingh--engineer-0A66C2?style=flat&logo=linkedin)](https://linkedin.com/in/kuldeepsingh-engineer)
-[![Org](https://img.shields.io/badge/Org-microminds--ai-6366f1?style=flat&logo=github)](https://github.com/microminds-ai)
-
----
-
-<div align="center">
-
-**⚡ trade-mesh-ai — Where market intelligence meets algorithmic precision**
-
-*Built with ☕ Java · ⚡ Spring WebFlux · 🧠 Claude AI · 📈 Zerodha Kite*
-
-</div>
+![Java](https://img.shields.io/badge/Java-17+-orange?style=flat-square&logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?style=flat-square&logo=springboot)
+![Apache Kafka](https://img.shields.io/badge/Kafka-Event--Driven-black?style=flat-square&logo=apachekafka)
+![Spring WebFlux](https://img.shields.io/badge/WebFlux-Reactive-blue?style=flat-square&logo=spring)
+![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=flat-square&logo=docker)
+![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
