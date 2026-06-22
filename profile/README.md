@@ -102,10 +102,15 @@ Services will be available at:
 
 ## 📬 Connect
 
-- 💼 [LinkedIn](https://www.linkedin.com/in/kuldeepsingh-engineer)
-- 🐙 [GitHub](https://github.com/kuldeepsingh123)
-- 🧠 [MicroMinds AI](https://github.com/microminds-ai) ← my AI & engineering org
-- 📧 Open an issue on any repo for questions or collaboration
+- 💼 LinkedIn: https://linkedin.com/in/kuldeepsingh-engineer
+- 🐙 GitHub: https://github.com/kuldeepsingh123
+- 🧠 MicroMinds AI: https://github.com/microminds-ai
+
+## 🤝 Collaboration
+
+Interested in algorithmic trading, backend engineering, distributed systems, or AI-powered trading infrastructure?
+
+Feel free to open an issue or start a discussion in any repository.
 
 ---
 
